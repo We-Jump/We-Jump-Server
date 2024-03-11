@@ -85,7 +85,7 @@ public class Course {
         this.instructor = instructor;
     }
 
-    public CourseResponseDTO build(Course course) {
+    public static CourseResponseDTO of(Course course) {
 
         return CourseResponseDTO.builder()
                 .id(course.getId())
