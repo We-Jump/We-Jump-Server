@@ -1,5 +1,6 @@
 package wejump.server.service.course.assignment;
 
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +13,7 @@ import wejump.server.domain.assignment.Assignment;
 import wejump.server.domain.assignment.Submit;
 import wejump.server.domain.assignment.SubmitId;
 import wejump.server.domain.member.Member;
+import wejump.server.repository.course.assignment.AssignmentRepository;
 import wejump.server.repository.course.assignment.SubmitRepository;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -20,17 +22,27 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
+import wejump.server.repository.member.MemberRepository;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class SubmitService {
+
     private final SubmitRepository submitRepository;
+    private final MemberRepository memberRepository;
+    private final AssignmentRepository assignmentRepository;
     @Value("${file.upload.path}")
     private String uploadPath;
 
 
-    public Submit createSubmit(Member member, Assignment assignment, MultipartFile file, String comment) throws IOException {
+    @Transactional
+    public void createSubmit(Long memberId, Long assignmentId, MultipartFile file, String comment) throws IOException {
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Can't find member"));
+        Assignment assignment = assignmentRepository.findById(assignmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Can't find Assignment"));
         // 업로드된 파일을 서버에 저장
         String fileName = file.getOriginalFilename();
         String filePath = saveFile(file);
@@ -44,8 +56,8 @@ public class SubmitService {
                 .submissionTime(LocalDateTime.now())
                 .comment(comment)
                 .build();
+        submitRepository.save(submit);
 
-        return submitRepository.save(submit);
     }
 
     private String saveFile(MultipartFile file) throws IOException {

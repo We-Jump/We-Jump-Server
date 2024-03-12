@@ -34,7 +34,6 @@ public class SubmitController {
 
     private final SubmitService submitService;
     private final AssignmentService assignmentService;
-    private final MemberRepository memberRepository;
 
     private final SubmitRepository submitRepository;
 
@@ -46,10 +45,7 @@ public class SubmitController {
             @RequestParam("comment") String comment
     ) throws IOException {
 
-        Assignment assignment = assignmentService.getAssignmentById(assignmentId);
-        Member member = memberRepository.findById(memberId).get();
-
-        Submit submit = submitService.createSubmit(member, assignment, file, comment);
+        submitService.createSubmit(memberId, assignmentId, file, comment);
 
         return new ResponseEntity<>("submit success", HttpStatus.CREATED);
     }
