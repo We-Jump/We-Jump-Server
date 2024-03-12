@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RequestMapping("/courses/submits/{assignmentId}")
 @CrossOrigin
-public class SubmitController {
+    public class SubmitController {
 
     private final SubmitService submitService;
     private final AssignmentService assignmentService;
@@ -38,7 +38,7 @@ public class SubmitController {
     private final SubmitRepository submitRepository;
 
     @PostMapping("/{memberId}")
-    public ResponseEntity<Object> createSubmit(
+    public ResponseEntity<String> createSubmit(
             @PathVariable Long assignmentId,
             @PathVariable Long memberId,
             @RequestParam("file") MultipartFile file,
@@ -51,16 +51,10 @@ public class SubmitController {
     }
 
     @GetMapping("/{memberId}")
-    public SubmitResponseDTO getSubmit(@PathVariable Long assignmentId,
+    public ResponseEntity<SubmitResponseDTO> getSubmit(@PathVariable Long assignmentId,
                                        @PathVariable Long memberId){
-
-        Submit submit = submitService.getSubmitById(assignmentId, memberId);
-        if (submit != null){
-            SubmitResponseDTO submitResponseDTO = submitService.createSubmitResponseDTO(submit);
-            return submitResponseDTO;
-        }
-
-        return null;
+        SubmitResponseDTO result = submitService.getSubmitById(assignmentId, memberId);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 

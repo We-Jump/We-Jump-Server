@@ -57,7 +57,6 @@ public class SubmitService {
                 .comment(comment)
                 .build();
         submitRepository.save(submit);
-
     }
 
     private String saveFile(MultipartFile file) throws IOException {
@@ -91,9 +90,10 @@ public class SubmitService {
     }
 
 
-    public Submit getSubmitById(Long assignmentId, Long memberId){
-
-        return submitRepository.findByAssignmentIdAndMemberId(assignmentId, memberId).get();
+    public SubmitResponseDTO getSubmitById(Long assignmentId, Long memberId){
+       Submit submit =  submitRepository.findByAssignmentIdAndMemberId(assignmentId, memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Can't find Assignment"));
+        return SubmitResponseDTO.of(submit);
     }
 
 
