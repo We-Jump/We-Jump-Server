@@ -1,11 +1,14 @@
 package wejump.server.service.course.assignment;
 
+import java.util.List;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import wejump.server.api.dto.course.submit.SubmitResponseDTO;
@@ -96,7 +99,15 @@ public class SubmitService {
         return SubmitResponseDTO.from(submit);
     }
 
+    //보안사항 적용 예정.
+    public List<SubmitResponseDTO> getAllSubmit(Long assignmentId){
 
+        List<Submit> submits = assignmentRepository.findById(assignmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Can't find Submits"))
+                .getSubmits();
+
+        return submits.stream().map(SubmitResponseDTO::from).toList();
+    }
 
     public SubmitResponseDTO createSubmitResponseDTO(Submit submit){
         String filePath = submit.getFilePath();

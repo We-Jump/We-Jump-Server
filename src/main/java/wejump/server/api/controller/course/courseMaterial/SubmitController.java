@@ -60,19 +60,11 @@ import java.util.stream.Collectors;
 
     //모든 제출 조회
     @GetMapping
-    public List<SubmitResponseDTO> getAllSubmit(@PathVariable Long assignmentId){
+    public ResponseEntity<List<SubmitResponseDTO>> getAllSubmit(@PathVariable Long assignmentId){
 
-        Assignment assignment = assignmentService.getAssignmentById(assignmentId);
-        List<Submit> submits = assignment.getSubmits();
+        List<SubmitResponseDTO> result = submitService.getAllSubmit(assignmentId);
 
-        if (!submits.isEmpty()){
-            List<SubmitResponseDTO> submitResponseDTOS= assignment.getSubmits().stream()
-                    .map(submitService::createSubmitResponseDTO)
-                    .collect(Collectors.toList());
-
-            return submitResponseDTOS;
-        }
-        return null;
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping("/{memberId}/download")
