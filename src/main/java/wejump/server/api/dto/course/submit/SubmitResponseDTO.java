@@ -20,7 +20,7 @@ public class SubmitResponseDTO {
 
     private String comment;
 
-    public static SubmitResponseDTO of(Submit submit){
+    public static SubmitResponseDTO from(Submit submit){
         String filePath = submit.getFilePath();
         String fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
 

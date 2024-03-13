@@ -93,7 +93,7 @@ public class SubmitService {
     public SubmitResponseDTO getSubmitById(Long assignmentId, Long memberId){
        Submit submit =  submitRepository.findByAssignmentIdAndMemberId(assignmentId, memberId)
                 .orElseThrow(() -> new IllegalArgumentException("Can't find Assignment"));
-        return SubmitResponseDTO.of(submit);
+        return SubmitResponseDTO.from(submit);
     }
 
 
