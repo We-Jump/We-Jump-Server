@@ -71,33 +71,14 @@ import java.util.stream.Collectors;
     public ResponseEntity<Resource> downloadFile(@PathVariable Long assignmentId,
                                                  @PathVariable Long memberId) throws MalformedURLException {
 
-        Submit submit = submitService.getSubmitById(assignmentId, memberId);
+        Resource downloadFile = submitService.downloadFile(assignmentId, memberId);
 
-        if (submit == null){
-            throw new IllegalArgumentException("Not Found, submit");
-        }
-        
-        String filePath = submit.getFilePath();
-        String fileName = extractFileName(filePath);
-
-        Resource resource = new UrlResource("file:" + filePath);
-
-        if (resource.exists() && resource.isReadable()) {
+        if (downloadFile.exists() && downloadFile.isReadable()) {
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)
-                    .body(resource);
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + downloadFile.getFilename())
+                    .body(downloadFile);
         } else {
             return ResponseEntity.notFound().build();
-        }
-    }
-
-    // 파일 이름 추출
-    private String extractFileName(String filePath) {
-        int lastIndex = filePath.lastIndexOf("/");
-        if (lastIndex != -1) {
-            return filePath.substring(lastIndex + 1);
-        } else {
-            return filePath;
         }
     }
 

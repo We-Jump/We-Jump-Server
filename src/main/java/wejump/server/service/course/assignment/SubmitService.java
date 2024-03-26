@@ -109,6 +109,14 @@ public class SubmitService {
         return submits.stream().map(SubmitResponseDTO::from).toList();
     }
 
+    public Resource downloadFile(final Long assignmentId, final Long memberId)
+            throws MalformedURLException {
+        Submit submit = submitRepository.findByAssignmentIdAndMemberId(assignmentId, memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Can't find Submit"));
+
+        return new UrlResource("file:" + extractFileName(submit.getFilePath()));
+    }
+
     public SubmitResponseDTO createSubmitResponseDTO(Submit submit){
         String filePath = submit.getFilePath();
         String fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
@@ -122,5 +130,14 @@ public class SubmitService {
                 .build();
 
         return submitResponseDTO;
+    }
+
+    private String extractFileName(String filePath) {
+        int lastIndex = filePath.lastIndexOf("/");
+        if (lastIndex != -1) {
+            return filePath.substring(lastIndex + 1);
+        } else {
+            return filePath;
+        }
     }
 }
